@@ -20,6 +20,8 @@ import { setTimeout } from 'node:timers/promises'
 
 const MARKETPLACE_HOST = 'https://marketplace.platformatic.dev'
 
+const installCmd = (pkgManager) => pkgManager === 'yarn' ? 'add' : 'install'
+
 export async function fetchStackables (marketplaceHost, userApiKey) {
   marketplaceHost = marketplaceHost || MARKETPLACE_HOST
 
@@ -73,7 +75,7 @@ async function importOrLocal ({ pkgManager, name, projectDir, pkg }) {
     } catch { }
 
     const spinner = ora(`Installing ${pkg}...`).start()
-    await execa(pkgManager, ['install', pkg], { cwd: projectDir })
+    await execa(pkgManager, [installCmd(pkgManager), pkg], { cwd: projectDir })
     spinner.succeed()
 
     const fileToImport = _require.resolve(pkg)
@@ -281,7 +283,7 @@ async function createApplication (args, logger, pkgManager) {
 
   if (args.install) {
     const spinner = ora('Installing dependencies...').start()
-    await execa(pkgManager, ['install'], { cwd: projectDir })
+    await execa(pkgManager, [installCmd(pkgManager)], { cwd: projectDir })
     spinner.succeed()
   }
 
@@ -314,7 +316,7 @@ async function createStackable (args, logger, pkgManager) {
 
   if (args.install) {
     const spinner = ora('Installing dependencies...').start()
-    await execa(pkgManager, ['install'], { cwd: projectDir })
+    await execa(pkgManager, [installCmd(pkgManager)], { cwd: projectDir })
     spinner.succeed()
   }
 
